@@ -1,5 +1,5 @@
-pub mod clawler;
-pub mod downloader;
+pub mod crawler;
+mod downloader;
 pub mod model;
-pub mod scraper;
-pub mod util;
+mod scraper;
+mod util;

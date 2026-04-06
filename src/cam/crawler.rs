@@ -12,7 +12,7 @@ use indicatif::{ProgressBar, ProgressStyle};
 use tokio::sync::Semaphore;
 
 // Get list word
-fn build_jobs(words: Vec<String>) -> Result<Vec<CrawlJob>> {
+pub fn build_jobs(words: Vec<String>) -> Vec<CrawlJob> {
     let mut jobs = Vec::new();
 
     for word in words {
@@ -22,7 +22,7 @@ fn build_jobs(words: Vec<String>) -> Result<Vec<CrawlJob>> {
         });
     }
 
-    Ok(jobs)
+    jobs
 }
 
 // crawl & download audio file
@@ -36,12 +36,13 @@ async fn process_job(job: CrawlJob) -> Result<Entry> {
 }
 
 // handle progress and execute job
-async fn crawl(jobs: Vec<CrawlJob>) -> Result<()> {
+pub async fn crawl(jobs: Vec<CrawlJob>) -> Result<Vec<Entry>> {
+    let mut res: Vec<Entry> = Vec::new();
     ensure_out_dir()?;
 
     if jobs.is_empty() {
         println!("No input provided!");
-        return Ok(());
+        return Ok(res);
     }
 
     let total = jobs.len() as u64;
@@ -65,7 +66,7 @@ async fn crawl(jobs: Vec<CrawlJob>) -> Result<()> {
             let _permit = semaphore.acquire_owned().await?;
             let label = job.original_input.clone();
 
-            let result = cam::clawler::process_job(job).await;
+            let result = cam::crawler::process_job(job).await;
             pb.inc(1);
 
             match &result {
@@ -87,6 +88,7 @@ async fn crawl(jobs: Vec<CrawlJob>) -> Result<()> {
     while let Some(join_result) = tasks.next().await {
         match join_result {
             Ok(Ok(_entry)) => {
+                res.push(_entry);
                 success_count += 1;
             }
             Ok(Err(_err)) => {
@@ -105,5 +107,5 @@ async fn crawl(jobs: Vec<CrawlJob>) -> Result<()> {
     println!("  Success: {}", success_count);
     println!("  Failed : {}", failure_count);
 
-    Ok(())
+    Ok(res)
 }

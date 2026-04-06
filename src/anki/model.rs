@@ -6,7 +6,7 @@ struct Deck {
     deck_id: u64,
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize)]
 pub struct AnkiRequest {
     pub action: String,
     pub version: u8,
