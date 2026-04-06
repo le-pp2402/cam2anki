@@ -1,4 +1,4 @@
-use crate::models::{Audio, Definition, Entry, Phonetic};
+use crate::cam::model::{Audio, Definition, Entry, Phonetic};
 use anyhow::Result;
 use reqwest::Client;
 use scraper::{Html, Selector};

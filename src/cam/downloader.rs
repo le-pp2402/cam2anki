@@ -1,9 +1,8 @@
-use std::{fs, path::Path};
-
+use crate::cam::model::Entry;
 use anyhow::Result;
 use reqwest::Client;
+use std::{fs, path::Path};
 
-use crate::models::Entry;
 /*
 *   ensure /audio_out dir created
 */
