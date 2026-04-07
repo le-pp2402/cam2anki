@@ -17,3 +17,14 @@ pub struct AnkiResponse<T> {
     pub result: Option<T>,
     pub error: Option<String>,
 }
+
+// "Learnable",
+// "Definition",
+// "Audio",
+// "Mems",
+// "Attributes",
+// "Extra",
+// "Extra 2",
+// "Choices"
+#[derive(Serialize)]
+struct AddWordRequest {}

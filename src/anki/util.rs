@@ -12,6 +12,33 @@ pub fn norm_anki_base_url(input: &str) -> String {
     }
 }
 
+pub fn convert_html_phoetic(phoetic: &str) -> String {
+    format!(
+        "<div style=\"color: #1d2a57; font-size: 1.2em; margin-bottom: 8px;\">
+            <strong>{}</strong> <i>(n)</i>
+        </div>",
+        phoetic
+    )
+}
+
+pub fn convert_html_definition(def: &str) -> String {
+    format!(
+        "<div style=\"color: #1d2a57; margin-bottom: 16px; border-bottom: 1px solid #1d2a57; padding-bottom: 6px;\">
+            <strong>{}</strong>
+        </div>", 
+        def
+    )
+}
+
+pub fn convert_html_example(exp: &str) -> String {
+    format!(
+        "<span style=\"font-style: italic;\">
+        {}
+        </span>",
+        exp
+    )
+}
+
 #[cfg(test)]
 mod test_anki {
     use crate::anki::util::norm_anki_base_url;
