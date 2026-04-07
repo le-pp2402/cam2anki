@@ -1,11 +1,14 @@
-use anyhow::Result;
+use anyhow::{Context, Result, anyhow};
 
 use crate::{
     cam::{
         crawler::{build_jobs, crawl},
         model::Entry,
     },
-    cli::{prompt::ask_words, selector},
+    cli::{
+        prompt::{ask_anki_connect_url, ask_words},
+        selector,
+    },
 };
 
 mod anki;
@@ -28,14 +31,21 @@ async fn ask_and_crawl() -> Vec<Entry> {
 }
 
 async fn select_deck() -> Result<String> {
-    let words = anki::anki_connect::get_decks("http://localhost:8765").await;
-    let selected_decks = selector::select_desk(&words);
-    Ok("".to_string())
+    let url = ask_anki_connect_url().context("Failed to read AnkiConnect URL")?;
+    let decks = anki::anki_connect::get_decks(&url).await?;
+
+    if decks.is_empty() {
+        return Err(anyhow!(
+            "No decks were returned by AnkiConnect at {url}. Check that Anki is open and that your profile has at least one deck."
+        ));
+    }
+
+    selector::select_desk(&decks)?.ok_or_else(|| anyhow!("Deck selection cancelled"))
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    select_deck().await?;
-    ask_and_crawl().await;
+    let selected_deck = select_deck().await?;
+    let words = ask_and_crawl().await;
     Ok(())
 }

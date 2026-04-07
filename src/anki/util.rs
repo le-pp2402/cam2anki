@@ -16,10 +16,17 @@ pub fn norm_anki_base_url(input: &str) -> String {
 mod test_anki {
     use crate::anki::util::norm_anki_base_url;
 
+    #[test]
+    fn uses_default_url_when_input_is_empty() {
+        let expected = "http://127.0.0.1:8765".to_string();
+
+        assert_eq!(norm_anki_base_url(""), expected);
+    }
+
+    #[test]
     fn test_norm_anki_base_url() {
         let expected = "http://localhost:8765".to_string();
 
-        assert_eq!(norm_anki_base_url(""), expected);
         assert_eq!(norm_anki_base_url("localhost:8765"), expected);
         assert_eq!(norm_anki_base_url("http://localhost:8765"), expected);
     }
