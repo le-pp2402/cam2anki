@@ -1,14 +1,20 @@
+use std::ptr::null;
+
 use anyhow::{Context, Result, bail};
 use reqwest::Client;
 
-use crate::anki::model::{AnkiRequest, AnkiResponse};
+use crate::{
+    anki::model::{AnkiRequest, AnkiResponse},
+    cam::model::Entry,
+};
 
 pub async fn get_decks(url: &str) -> Result<Vec<String>> {
     let client = Client::new();
 
-    let payload = AnkiRequest {
+    let payload = AnkiRequest::<String> {
         action: "deckNames".to_string(),
         version: 6,
+        params: None,
     };
 
     let response = client
@@ -35,3 +41,5 @@ pub async fn get_decks(url: &str) -> Result<Vec<String>> {
 
     anki_res.result.context("AnkiConnect returned no deck list")
 }
+
+pub async fn insert_word(url: &str, word: &Entry, deck: &str) {}
