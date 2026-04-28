@@ -1,5 +1,4 @@
-pub mod crawler;
-mod downloader;
+pub(crate) mod downloader;
 pub mod model;
-mod scraper;
-mod util;
+pub(crate) mod scraper;
+pub mod util;

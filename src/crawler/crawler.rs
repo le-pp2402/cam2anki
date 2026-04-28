@@ -11,29 +11,8 @@ use futures::stream::{FuturesUnordered, StreamExt};
 use indicatif::{ProgressBar, ProgressStyle};
 use tokio::sync::Semaphore;
 
-// Get list word
-pub fn build_jobs(words: Vec<String>) -> Vec<CrawlJob> {
-    let mut jobs = Vec::new();
 
-    for word in words {
-        jobs.push(CrawlJob {
-            original_input: word.clone(),
-            url: util::input_to_url(&word),
-        });
-    }
 
-    jobs
-}
-
-// crawl & download audio file
-async fn process_job(job: CrawlJob) -> Result<Entry> {
-    let html = cam::scraper::fetch_html(&job.url).await?;
-    let mut word = cam::scraper::parse_entry(&html);
-
-    download_audio_files(&mut word).await?;
-
-    Ok(word)
-}
 
 // handle progress and execute job
 pub async fn crawl(jobs: Vec<CrawlJob>) -> Result<Vec<Entry>> {
@@ -45,7 +24,7 @@ pub async fn crawl(jobs: Vec<CrawlJob>) -> Result<Vec<Entry>> {
         return Ok(res);
     }
 
-    let total = jobs.len() as u64;
+    let total = jobs.len() as u64 * 2; // 2 steps: fetch & insert to anki
     let pb = ProgressBar::new(total);
 
     pb.set_style(
@@ -72,11 +51,16 @@ pub async fn crawl(jobs: Vec<CrawlJob>) -> Result<Vec<Entry>> {
             match &result {
                 Ok(entry) => {
                     pb.println(format!("OK   {:<20} -> {}", label, entry.word));
+                    // TODO: 
+                    insert_word_to_anki(&entry, ).await?;
+                    pb.inc(1);
                 }
                 Err(err) => {
                     pb.println(format!("FAIL {:<20} -> {}", label, err));
                 }
             }
+
+
 
             result
         }));
