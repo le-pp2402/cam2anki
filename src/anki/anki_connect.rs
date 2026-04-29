@@ -303,6 +303,8 @@ fn custom_model_css() -> &'static str {
 .inline-flex { display: inline-flex; }
 .w-full { width: 100%; }
 .max-w-2xl { max-width: 42rem; }
+.max-w-3xl { max-width: 48rem; }
+.max-w-4xl { max-width: 56rem; }
 .flex-wrap { flex-wrap: wrap; }
 .items-center { align-items: center; }
 .gap-2 { gap: 0.5rem; }
@@ -389,11 +391,11 @@ audio {
 }
 
 fn custom_front_template() -> &'static str {
-    r#"<div class="mx-auto max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm text-left">
+    r#"<div class="mx-auto max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm text-left">
     <div class="space-y-5">
         <div class="space-y-3">
             <div class="text-xs font-semibold text-slate-500">Cloze</div>
-            <div class="text-2xl font-semibold leading-8 text-slate-900 text-pretty text-balance">{{cloze:Text}}</div>
+            <div class="text-3xl font-semibold leading-8 text-slate-900 text-pretty text-balance">{{cloze:Text}}</div>
             {{type:cloze:Text}}
         </div>
 
@@ -420,11 +422,11 @@ fn custom_front_template() -> &'static str {
 }
 
 fn custom_back_template() -> &'static str {
-    r#"<div class="mx-auto max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm text-left">
+    r#"<div class="mx-auto max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm text-left">
     <div class="space-y-5">
         <div class="space-y-3">
             <div class="text-xs font-semibold text-slate-500">Sentence</div>
-            <div class="text-2xl font-semibold leading-8 text-slate-900 text-pretty text-balance">{{cloze:Text}}</div>
+            <div class="text-3xl font-semibold leading-8 text-slate-900 text-pretty text-balance">{{cloze:Text}}</div>
             {{type:cloze:Text}}
         </div>
 
