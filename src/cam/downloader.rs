@@ -14,13 +14,21 @@ pub fn ensure_out_dir() -> Result<()> {
 /*
 *  normalize auto output file
 */
-fn build_audio_output_path(word: &str, region: &str) -> String {
+fn build_audio_basename(word: &str, region: &str) -> String {
     let safe_word = word
         .to_lowercase()
         .replace(' ', "_")
         .replace('/', "_")
         .replace('-', "_");
-    format!("audio_out/{}_{}.mp3", safe_word, region)
+    format!("{}_{}.mp3", safe_word, region)
+}
+
+pub fn build_audio_output_path(word: &str, region: &str) -> String {
+    format!("audio_out/{}", build_audio_basename(word, region))
+}
+
+pub fn build_audio_filename(word: &str, region: &str) -> String {
+    build_audio_basename(word, region)
 }
 
 /*

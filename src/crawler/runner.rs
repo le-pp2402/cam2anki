@@ -1,11 +1,9 @@
 use anyhow::Result;
 
-use crate::{
-    cam::{
-        downloader::download_audio_files,
-        model::{CrawlJob, Entry},
-        scraper,
-    },
+use crate::cam::{
+    downloader::download_audio_files,
+    model::{CrawlJob, Entry},
+    scraper,
 };
 
 pub async fn process_job(job: CrawlJob) -> Result<Entry> {

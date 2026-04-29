@@ -1,11 +1,11 @@
 use anyhow::{Context, Result, anyhow};
 
 use crate::{
-    crawler::{job::build_jobs, pipeline},
     cli::{
         prompt::{ask_anki_connect_url, ask_words},
         selector,
     },
+    crawler::{job::build_jobs, pipeline},
 };
 
 mod anki;
@@ -13,7 +13,7 @@ mod cam;
 mod cli;
 mod crawler;
 
-const CUSTOM_MODEL_NAME: &str = "Cam2Anki Elegant v1";
+const CUSTOM_MODEL_NAME: &str = "Cam2Anki Cloze v2";
 
 fn choose_deck(decks: &[String]) -> Result<String> {
     if decks.is_empty() {
@@ -58,7 +58,10 @@ async fn main() -> Result<()> {
     println!("  Deck    : {}", selected_deck);
     println!("  Model   : {}", CUSTOM_MODEL_NAME);
     println!("  Total   : {}", summary.total_words);
-    println!("  Crawl   : ok={}, failed={}", summary.crawl_success, summary.crawl_failed);
+    println!(
+        "  Crawl   : ok={}, failed={}",
+        summary.crawl_success, summary.crawl_failed
+    );
     println!(
         "  Import  : ok={}, failed={}, skipped={}",
         summary.import_success, summary.import_failed, summary.import_skipped
