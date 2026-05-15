@@ -12,6 +12,7 @@ mod anki;
 mod cam;
 mod cli;
 mod crawler;
+mod study4;
 
 const CUSTOM_MODEL_NAME: &str = "Cam2Anki Cloze v2";
 
@@ -25,9 +26,59 @@ fn choose_deck(decks: &[String]) -> Result<String> {
     selector::select_desk(decks)?.ok_or_else(|| anyhow!("Deck selection cancelled"))
 }
 
+fn ask_mode() -> Result<String> {
+    let options = vec![
+        "Import from study4 SQLite database".to_string(),
+        "Crawl Cambridge Dictionary".to_string(),
+    ];
+    selector::select_desk(&options)?.ok_or_else(|| anyhow!("Mode selection cancelled"))
+}
+
+fn ask_db_path() -> String {
+    use std::io::{self, Write};
+    print!("SQLite database path [study4.sqlite]: ");
+    io::stdout().flush().ok();
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).ok();
+    let trimmed = input.trim();
+    if trimmed.is_empty() {
+        "study4.sqlite".to_string()
+    } else {
+        trimmed.to_string()
+    }
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
     let url = ask_anki_connect_url().context("Failed to read AnkiConnect URL")?;
+
+    let mode = ask_mode()?;
+
+    if mode.contains("study4") {
+        let db_path = ask_db_path();
+
+        println!();
+        println!("Importing from: {db_path}");
+        println!("AnkiConnect   : {url}");
+        println!();
+
+        let summary = study4::importer::run_import(study4::importer::ImportConfig {
+            anki_url: url,
+            db_path,
+        })
+        .await?;
+
+        println!();
+        println!("Import complete:");
+        println!("  Decks created : {}", summary.decks_created);
+        println!("  Notes added   : {}", summary.notes_added);
+        println!("  Notes skipped : {}", summary.notes_skipped);
+        println!("  Notes failed  : {}", summary.notes_failed);
+
+        return Ok(());
+    }
+
+    // ── Cambridge crawl mode ──────────────────────────────────────────────────
     let decks = anki::anki_connect::get_decks(&url).await?;
     let selected_deck = choose_deck(&decks)?;
     anki::anki_connect::ensure_custom_model(&url, CUSTOM_MODEL_NAME).await?;
